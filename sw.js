@@ -1,5 +1,5 @@
 // Fa funzionare l'app anche senza connessione
-const CACHE = 'salvadanaio-v1';
+const CACHE = 'salvadanaio-v2';
 const FILES = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
