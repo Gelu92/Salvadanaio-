@@ -5,11 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Salvadanaio</title>
 <meta name="theme-color" content="#1f3a5f">
-<link rel="manifest" href="manifest.json?v=3">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json?v=5">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Salvadanaio">
+<script>
+/* Si mette in ascolto subito, prima di tutto il resto, così il permesso di installare non va perso */
+window.__bip=null;
+addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__bip=e;});
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
@@ -327,17 +332,31 @@ document.addEventListener('click',e=>{
   if(t.id==='startFresh'){S=fresh();save();render();toast('Pronto: si parte da zero');}
 });
 
-/* Installazione come app: il pulsante compare solo se il browser lo permette e sparisce dopo l'installazione */
-let installEvt=null;
+/* Installazione come app: il pulsante è sempre visibile finché l'app non è installata */
+const INST=KEY+'-installata';
 const isApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(!isApp())$('install').hidden=false;});
+function markInstalled(){try{localStorage.setItem(INST,'1')}catch(e){}$('install').hidden=true;}
+function showInstall(){
+  let done=false;try{done=localStorage.getItem(INST)==='1'}catch(e){}
+  $('install').hidden=isApp()||done;
+}
+if(isApp())markInstalled();
+showInstall();
 $('install').onclick=async()=>{
-  if(!installEvt)return;
-  installEvt.prompt();
-  try{const r=await installEvt.userChoice;if(r.outcome==='accepted')$('install').hidden=true;}catch(e){}
-  installEvt=null;
+  const ev=window.__bip;
+  if(ev){
+    ev.prompt();
+    try{const r=await ev.userChoice;if(r.outcome==='accepted')markInstalled();}catch(e){}
+    window.__bip=null;return;
+  }
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  modal(`<h3>Installa Salvadanaio</h3>${ios
+    ?'<p>Su iPhone tocca il tasto <b>Condividi</b> di Safari, poi <b>Aggiungi alla schermata Home</b>.</p>'
+    :'<p>Tocca i <b>tre puntini ⋮</b> in alto a destra di Chrome, poi <b>Installa app</b>.</p>'}
+    <div class="row"><button class="btn" data-x>Chiudi</button><button class="btn primary" data-ok>Fatto, è installata</button></div>`,
+    ()=>{markInstalled();});
 };
-window.addEventListener('appinstalled',()=>{$('install').hidden=true;installEvt=null;toast('App installata sul telefono');});
+window.addEventListener('appinstalled',()=>{markInstalled();window.__bip=null;toast('App installata sul telefono');});
 if('serviceWorker' in navigator&&window.isSecureContext){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
 render();

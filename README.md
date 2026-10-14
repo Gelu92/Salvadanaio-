@@ -18,7 +18,7 @@ I dati restano solo sul telefono, nella memoria del browser.
 ## Pubblicarla con GitHub Pages
 
 1. Crea un repository nuovo, per esempio `salvadanaio`.
-2. Carica **il contenuto** dello zip nella radice del repository: `index.html` deve stare in primo piano, non dentro una cartella.
+2. Carica **tutti i file** dello zip nella radice del repository (sono tutti allo stesso livello, senza cartelle).
 3. Vai su **Settings → Pages**, scegli **Deploy from a branch**, branch `main`, cartella `/ (root)`, poi **Save**.
 4. Dopo un minuto l'app è su `https://TUO-NOME.github.io/salvadanaio/`.
 
