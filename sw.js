@@ -1,5 +1,5 @@
 // Fa funzionare l'app anche senza connessione
-const CACHE = 'salvadanaio-v5';
+const CACHE = 'salvadanaio-v6';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

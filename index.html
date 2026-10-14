@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Salvadanaio</title>
 <meta name="theme-color" content="#1f3a5f">
-<link rel="manifest" href="manifest.json?v=5">
+<link rel="manifest" href="manifest.json?v=6">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,7 +22,7 @@ addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__b
 /* Layout: una colonna stile app mobile; testata col totale, selettore salvadanaio, monete grandi da toccare, storico sotto */
 :root{
   --bg:#eef2f6; --surface:#ffffff; --ink:#15212e; --muted:#5b6b7c; --line:#d6dee7;
-  --navy:#1f3a5f; --brass:#c4952f; --copper:#b5653d; --good:#2e7d4f; --danger:#b3362f;
+  --navy:#1f3a5f; --brass:#c4952f; --copper:#b5653d; --good:#2e7d4f; --danger:#b3362f; --cash:#2f7d6b;
   --tile:#f6f8fb;
   --f-display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -31,10 +31,10 @@ addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__b
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0f1720; --surface:#17222e; --ink:#e7edf3; --muted:#93a3b4; --line:#273544;
-  --navy:#8fb3dc; --brass:#e0b453; --copper:#e08a5f; --good:#5fc58a; --danger:#ef7a70; --tile:#1d2a37; color-scheme:dark}}
+  --navy:#8fb3dc; --brass:#e0b453; --copper:#e08a5f; --good:#5fc58a; --danger:#ef7a70; --cash:#5cc4a9; --tile:#1d2a37; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f1720; --surface:#17222e; --ink:#e7edf3; --muted:#93a3b4; --line:#273544;
-  --navy:#8fb3dc; --brass:#e0b453; --copper:#e08a5f; --good:#5fc58a; --danger:#ef7a70; --tile:#1d2a37; color-scheme:dark}
+  --navy:#8fb3dc; --brass:#e0b453; --copper:#e08a5f; --good:#5fc58a; --danger:#ef7a70; --cash:#5cc4a9; --tile:#1d2a37; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
@@ -56,13 +56,14 @@ header{display:flex;flex-direction:column;gap:2px;padding-top:8px}
 .banner{background:var(--tile);border:1px dashed var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;font-size:14px}
 .banner button{background:var(--navy);color:var(--bg);border:0;border-radius:999px;padding:8px 14px;font-weight:600;white-space:nowrap}
 
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--tile);border:1px solid var(--line);padding:5px;border-radius:14px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--tile);border:1px solid var(--line);padding:5px;border-radius:14px}
 .seg button{border:0;background:transparent;border-radius:10px;padding:10px 8px;display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;min-width:0}
-.seg button .n{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.seg button .n{font-weight:600;font-size:14px;line-height:1.2;max-width:100%}
 .seg button .v{font-size:13px;color:var(--muted)}
 .seg button[aria-selected="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .seg button[data-b="grandi"][aria-selected="true"] .n{color:var(--brass)}
 .seg button[data-b="piccole"][aria-selected="true"] .n{color:var(--copper)}
+.seg button[data-b="banconote"][aria-selected="true"] .n{color:var(--cash)}
 
 .bank{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 18px;display:flex;flex-direction:column;gap:18px}
 .bank-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -125,7 +126,7 @@ section h2{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0 
 .hist .open{color:var(--good);font-weight:600}
 .empty{padding:16px;color:var(--muted);font-size:14px;text-align:center}
 
-.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(150%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 10px 10px 18px;display:flex;gap:12px;align-items:center;font-size:14px;transition:transform .25s;max-width:calc(100% - 32px);z-index:5}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(150%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 10px 10px 18px;display:flex;gap:12px;align-items:center;font-size:14px;transition:transform .25s;width:max-content;max-width:calc(100% - 32px);z-index:5}
 .toast.on{transform:translateX(-50%) translateY(0)}
 .toast button{background:var(--brass);color:#1b1404;border:0;border-radius:999px;padding:6px 12px;font-weight:700}
 
@@ -138,6 +139,23 @@ section h2{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0 
 .sheet .row{display:flex;gap:10px;justify-content:flex-end}
 .btn.primary{background:var(--navy);color:var(--bg);border-color:var(--navy)}
 .btn.primary.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+
+/* banconote: rettangoli con i colori delle vere banconote in euro */
+.note{width:100%;max-width:96px;aspect-ratio:2/1.08;border:0;border-radius:6px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:5px 7px;color:#fff;
+  background:linear-gradient(135deg,var(--nc) 0%,var(--nc2) 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.25),0 3px 8px rgba(0,0,0,.18);transition:transform .08s}
+.note::after{content:"";position:absolute;right:-14%;top:-30%;width:62%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.18)}
+.note:active{transform:scale(.93)}
+.note.pop{animation:pop .3s}
+.note .nv{font-family:var(--f-display);font-weight:800;font-size:24px;line-height:1;position:relative;z-index:1}
+.note .ne{font-size:9px;letter-spacing:.14em;font-weight:700;opacity:.85;position:relative;z-index:1}
+.n5{--nc:#8f9ba3;--nc2:#5f6d77}
+.n10{--nc:#d9655a;--nc2:#a63b33}
+.n20{--nc:#5b86c9;--nc2:#2f5a99}
+.n50{--nc:#ee9a4a;--nc2:#c06a1e}
+.n100{--nc:#5fae6b;--nc2:#2f7d3d}
+.n200{--nc:#e6c24f;--nc2:#b48d1c;color:#3a2c05}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:360px){.coin{--d:66px!important}}
 
@@ -179,7 +197,11 @@ section h2{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0 
 
 <script>
 const KEY='salvadanaio-v1';
-const COINS={grandi:[50,100,200],piccole:[5,10,20]};
+const COINS={grandi:[50,100,200],piccole:[5,10,20],banconote:[500,1000,2000,5000,10000,20000]};
+const BANKS=['grandi','piccole','banconote'];
+const ACC={grandi:'var(--brass)',piccole:'var(--copper)',banconote:'var(--cash)'};
+const isNote=b=>b==='banconote';
+const noun=(b,n)=>isNote(b)?(n===1?'banconota':'banconote'):(n===1?'moneta':'monete');
 const SIZE={200:86,100:78,50:82,20:76,10:68,5:72};
 const METAL={200:'m-2e',100:'m-1e',50:'m-gold',20:'m-gold',10:'m-gold',5:'m-cu'};
 const fmt=new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'});
@@ -191,14 +213,16 @@ const coinLabel=c=>c>=100?(c/100)+' €':c+' cent';
 
 function fresh(){return{example:false,cur:'grandi',banks:{
   grandi:{name:'Monete grandi',goal:20000,coins:{50:0,100:0,200:0}},
-  piccole:{name:'Monete piccole',goal:3000,coins:{5:0,10:0,20:0}}},
+  piccole:{name:'Monete piccole',goal:3000,coins:{5:0,10:0,20:0}},
+  banconote:{name:'Banconote',goal:50000,coins:{500:0,1000:0,2000:0,5000:0,10000:0,20000:0}}},
   log:[],opens:[]};}
 
 function example(){
   const s=fresh();s.example=true;
   s.banks.grandi.coins={50:14,100:23,200:9};
   s.banks.piccole.coins={5:31,10:42,20:27};
-  const now=Date.now(),seq=[[200,'grandi'],[10,'piccole'],[100,'grandi'],[20,'piccole'],[50,'grandi'],[5,'piccole'],[100,'grandi']];
+  s.banks.banconote.coins={500:3,1000:4,2000:2,5000:1,10000:0,20000:0};
+  const now=Date.now(),seq=[[200,'grandi'],[10,'piccole'],[1000,'banconote'],[100,'grandi'],[20,'piccole'],[50,'grandi'],[5,'piccole'],[100,'grandi']];
   seq.forEach(([c,b],i)=>s.log.unshift({t:now-(i*7+1)*3600e3,b,c,d:1}));
   s.opens.push({t:now-40*864e5,b:'piccole',a:1840});
   return s;
@@ -207,6 +231,9 @@ function example(){
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.banks)S=example();
+/* chi usava già l'app riceve il nuovo salvadanaio vuoto, senza perdere i dati */
+if(!S.banks.banconote)S.banks.banconote=fresh().banks.banconote;
+if(!BANKS.includes(S.cur))S.cur='grandi';
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 const total=b=>COINS[b].reduce((a,c)=>a+c*S.banks[b].coins[c],0);
@@ -224,24 +251,24 @@ function when(t){
 }
 
 function render(){
-  const g=total('grandi')+total('piccole');
+  const g=BANKS.reduce((a,b)=>a+total(b),0);
   $('grand').textContent=eur(g);
-  const np=pieces('grandi')+pieces('piccole');
-  $('grandSub').textContent=pz(np)+(np===1&&!S.hide?' moneta':' monete')+' in tutto';
+  const nm=pieces('grandi')+pieces('piccole'),nb=pieces('banconote');
+  $('grandSub').textContent=`${pz(nm)} ${S.hide?'monete':noun('grandi',nm)} e ${pz(nb)} ${S.hide?'banconote':noun('banconote',nb)}`;
   $('eye').innerHTML=S.hide?EYE_OFF+'Mostra':EYE_ON+'Nascondi';
   $('eye').setAttribute('aria-pressed',!!S.hide);
   $('exBanner').hidden=!S.example;
 
-  $('seg').innerHTML=['grandi','piccole'].map(b=>`<button role="tab" data-b="${b}" aria-selected="${S.cur===b}"><span class="n">${esc(S.banks[b].name)}</span><span class="v num">${eur(total(b))}</span></button>`).join('');
+  $('seg').innerHTML=BANKS.map(b=>`<button role="tab" data-b="${b}" aria-selected="${S.cur===b}"><span class="n">${esc(S.banks[b].name)}</span><span class="v num">${eur(total(b))}</span></button>`).join('');
 
   const b=S.cur,B=S.banks[b],t=total(b),pct=B.goal?Math.min(100,t/B.goal*100):0;
-  const acc=b==='grandi'?'var(--brass)':'var(--copper)';
-  $('bank').style.setProperty('--acc',acc);
+  $('bank').style.setProperty('--acc',ACC[b]);
+  const N=isNote(b),one=N?'una banconota':'una moneta',many=N?'banconote':'monete';
   $('bank').innerHTML=`
     <div class="bank-head">
       <div style="min-width:0">
         <button class="bank-name" id="rename" title="Rinomina">${esc(B.name)}</button>
-        <div class="bank-meta num">${pz(pieces(b))} ${pieces(b)===1&&!S.hide?'moneta':'monete'} · ${COINS[b].map(coinLabel).join(', ')}</div>
+        <div class="bank-meta num">${pz(pieces(b))} ${S.hide?many:noun(b,pieces(b))} · ${COINS[b].map(coinLabel).join(', ')}</div>
       </div>
     </div>
     <div class="bank-total num accent">${eur(t)}</div>
@@ -252,13 +279,14 @@ function render(){
     </div>
     <div class="coins">${COINS[b].map(c=>`
       <div class="cbox">
-        <button class="coin ${METAL[c]}" style="--d:${SIZE[c]}px" data-add="${c}" aria-label="Aggiungi una moneta da ${coinLabel(c)}"><span>${c>=100?c/100+'<small>€</small>':c+'<small>c</small>'}</span></button>
+        ${N?`<button class="note n${c/100}" data-add="${c}" aria-label="Aggiungi una banconota da ${coinLabel(c)}"><span class="nv">${c/100}</span><span class="ne">EURO</span></button>`
+          :`<button class="coin ${METAL[c]}" style="--d:${SIZE[c]}px" data-add="${c}" aria-label="Aggiungi una moneta da ${coinLabel(c)}"><span>${c>=100?c/100+'<small>€</small>':c+'<small>c</small>'}</span></button>`}
         <div class="count num">${pz(B.coins[c])} <span>pz</span></div>
-        <div class="ctrl"><button class="minus" data-sub="${c}" ${B.coins[c]?'':'disabled'} aria-label="Togli una moneta da ${coinLabel(c)}">−</button><button class="qty" data-qty="${c}" aria-label="Aggiungi più monete da ${coinLabel(c)}">+ N</button></div>
+        <div class="ctrl"><button class="minus" data-sub="${c}" ${B.coins[c]?'':'disabled'} aria-label="Togli ${one} da ${coinLabel(c)}">−</button><button class="qty" data-qty="${c}" aria-label="Aggiungi più ${many} da ${coinLabel(c)}">+ N</button></div>
         <div class="csub num">${eur(c*B.coins[c])}</div>
       </div>`).join('')}
     </div>
-    <p class="hint">Tocca una moneta ogni volta che la metti nel salvadanaio</p>
+    <p class="hint">Tocca ${one} ogni volta che la metti nel salvadanaio</p>
     <div class="actions"><button class="btn danger" id="empty" ${t?'':'disabled'}>Svuota salvadanaio</button></div>`;
 
   const wk=Date.now()-7*864e5;
@@ -273,8 +301,8 @@ function render(){
 
   const items=[...S.log.map(l=>({...l,k:'c'})),...S.opens.map(o=>({...o,k:'o'}))].sort((a,b)=>b.t-a.t).slice(0,40);
   $('hist').innerHTML=items.length?items.map(i=>i.k==='o'
-    ?`<li><span class="dot ${i.b==='piccole'?'p':''}"></span><span class="what open">Svuotato ${esc(S.banks[i.b].name)}: ${eur(i.a)}</span><span class="when">${when(i.t)}</span></li>`
-    :`<li><span class="dot ${i.b==='piccole'?'p':''}"></span><span class="what num ${i.d<0?'neg':''}">${i.d>0?'+':'−'} ${Math.abs(i.d)>1?pz(Math.abs(i.d))+' × ':''}${coinLabel(i.c)}${Math.abs(i.d)>1?' = '+eur(Math.abs(i.d)*i.c):''}</span><span class="when">${when(i.t)}</span></li>`).join('')
+    ?`<li><span class="dot" style="background:${ACC[i.b]}"></span><span class="what open">Svuotato ${esc((S.banks[i.b]||{name:''}).name)}: ${eur(i.a)}</span><span class="when">${when(i.t)}</span></li>`
+    :`<li><span class="dot" style="background:${ACC[i.b]}"></span><span class="what num ${i.d<0?'neg':''}">${i.d>0?'+':'−'} ${Math.abs(i.d)>1?pz(Math.abs(i.d))+' × ':''}${coinLabel(i.c)}${Math.abs(i.d)>1?' = '+eur(Math.abs(i.d)*i.c):''}</span><span class="when">${when(i.t)}</span></li>`).join('')
     :'<li class="empty">Ancora nessuna moneta. Tocca una moneta qui sopra per iniziare.</li>';
 }
 
@@ -296,7 +324,7 @@ function change(c,d){
   if(d>0){const el=document.querySelector(`[data-add="${c}"]`);el&&el.classList.add('pop');}
   if(navigator.vibrate)try{navigator.vibrate(12)}catch(e){}
   const n=Math.abs(d);
-  toast(n>1?`Aggiunte ${n} monete da ${coinLabel(c)} (${eur(n*c)})`:(d>0?'Aggiunta ':'Tolta ')+coinLabel(c),()=>{S.banks[b].coins[c]-=d;const i=S.log.indexOf(entry);if(i>-1)S.log.splice(i,1);});
+  toast(n>1?`Aggiunte ${n} ${noun(b,n)} da ${coinLabel(c)} (${eur(n*c)})`:(d>0?'Aggiunta ':'Tolta ')+coinLabel(c),()=>{S.banks[b].coins[c]-=d;const i=S.log.indexOf(entry);if(i>-1)S.log.splice(i,1);});
 }
 
 function modal(html,onOk){
@@ -319,7 +347,8 @@ document.addEventListener('click',e=>{
   if(t.dataset.step){const i=$('fQty');i.value=(parseInt(i.value)||0)+(+t.dataset.step);i.oninput();return}
   const B=S.banks[S.cur];
   if(t.dataset.qty){const c=+t.dataset.qty;
-    modal(`<h3>Monete da ${coinLabel(c)}</h3><p>Quante ne metti nel salvadanaio?</p><label>Numero di monete<input id="fQty" type="number" inputmode="numeric" min="1" max="9999" placeholder="es. 12"></label><div class="steps"><button data-step="1">+1</button><button data-step="5">+5</button><button data-step="10">+10</button><button data-step="20">+20</button></div><div class="preview num" id="qPrev">&nbsp;</div><div class="row"><button class="btn" data-x>Annulla</button><button class="btn primary" data-ok>Aggiungi</button></div>`,
+    const nn=noun(S.cur,2);
+    modal(`<h3>${nn[0].toUpperCase()+nn.slice(1)} da ${coinLabel(c)}</h3><p>Quante ne metti nel salvadanaio?</p><label>Numero di ${nn}<input id="fQty" type="number" inputmode="numeric" min="1" max="9999" placeholder="es. 12"></label><div class="steps"><button data-step="1">+1</button><button data-step="5">+5</button><button data-step="10">+10</button><button data-step="20">+20</button></div><div class="preview num" id="qPrev">&nbsp;</div><div class="row"><button class="btn" data-x>Annulla</button><button class="btn primary" data-ok>Aggiungi</button></div>`,
       i=>{const n=parseInt(i.value);if(!(n>0&&n<=9999))return false;setTimeout(()=>change(c,n));});
     const i=$('fQty');i.oninput=()=>{const n=parseInt(i.value);$('qPrev').innerHTML=n>0?`${n} × ${coinLabel(c)} = ${eur(n*c)}`:'&nbsp;'};return}
   if(t.id==='rename')modal(`<h3>Nome del salvadanaio</h3><label>Nome<input id="fName" maxlength="30" value="${esc(B.name)}"></label><div class="row"><button class="btn" data-x>Annulla</button><button class="btn primary" data-ok>Salva</button></div>`,
