@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Salvadanaio</title>
 <meta name="theme-color" content="#1f3a5f">
-<link rel="manifest" href="manifest.json?v=6">
+<link rel="manifest" href="manifest.json?v=9">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -156,6 +156,58 @@ section h2{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0 
 .n50{--nc:#ee9a4a;--nc2:#c06a1e}
 .n100{--nc:#5fae6b;--nc2:#2f7d3d}
 .n200{--nc:#e6c24f;--nc2:#b48d1c;color:#3a2c05}
+/* previsione obiettivo */
+.forecast{font-size:13px;color:var(--ink);background:var(--tile);border-radius:10px;padding:8px 10px}
+.forecast b{color:var(--acc)}
+/* grafico andamento */
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.sec-head h2{margin:0}
+.mini-seg{display:flex;background:var(--tile);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.mini-seg button{border:0;background:none;border-radius:7px;padding:5px 10px;font-size:13px;font-weight:600;color:var(--muted)}
+.mini-seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 10px 8px}
+.chart svg{display:block;width:100%;height:auto}
+.chart .ax{font:11px var(--f-body);fill:var(--muted)}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .cbar{fill:var(--navy);opacity:.35}
+.chart .cbar.now{fill:var(--brass);opacity:1}
+.chart-note{font-size:13px;color:var(--muted);padding:2px 6px 6px}
+.chart-empty{padding:28px 10px;text-align:center;color:var(--muted);font-size:14px}
+/* prelievo */
+.wrows{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto}
+.wrow{display:grid;grid-template-columns:1fr auto 34px 32px 34px;align-items:center;gap:8px;padding:6px 8px;background:var(--tile);border-radius:10px}
+.wrow .wl{font-weight:700}
+.wrow .wa{font-size:12px;color:var(--muted)}
+.wrow b{text-align:center}
+.wrow button{width:34px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:17px}
+.wrow button:disabled{opacity:.35}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{border:1px solid var(--line);background:var(--tile);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.chips button[aria-pressed="true"]{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+.hist .wd{color:var(--ink);font-weight:600}
+.hist .why{color:var(--muted);font-weight:400}
+/* impostazioni */
+.settings{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.set-item{padding:14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+.set-item:first-child{border-top:0}
+.set-item b{display:block;font-size:15px}
+.set-item span{font-size:13px;color:var(--muted)}
+.set-item .warn{color:var(--danger)}
+/* blocco PIN */
+.lock{position:fixed;inset:0;z-index:20;background:var(--bg);display:grid;place-items:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.lock-in{width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.lock-coin{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:800 30px var(--f-display);color:#3b2a08;background:radial-gradient(circle at 35% 30%,var(--gold-a),var(--gold-b))}
+.lock h3{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px}
+.pins{display:flex;gap:14px}
+.pins i{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted)}
+.pins i.on{background:var(--ink);border-color:var(--ink)}
+.pins.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.lock-msg{margin:0;font-size:13px;color:var(--danger);min-height:18px}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+.pad button{height:64px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:600 24px var(--f-body)}
+.pad button.ghost{border:0;background:none;font-size:14px;color:var(--muted)}
+.lock-forgot{border:0;background:none;color:var(--navy);font-weight:600;font-size:14px;padding:6px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:360px){.coin{--d:66px!important}}
 
@@ -187,9 +239,38 @@ section h2{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0 
   </section>
 
   <section>
+    <div class="sec-head"><h2>Andamento</h2>
+      <div class="mini-seg"><button data-cm="w" id="cmW">Settimane</button><button data-cm="m" id="cmM">Mesi</button></div>
+    </div>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <section>
     <h2>Storico</h2>
     <ul class="hist" id="hist"></ul>
   </section>
+
+  <section>
+    <h2>Impostazioni</h2>
+    <div class="settings" id="settings"></div>
+    <input type="file" id="restoreFile" accept=".json,.txt,application/json,text/plain" hidden>
+  </section>
+</div>
+
+<div class="lock" id="lock" hidden>
+  <div class="lock-in">
+    <div class="lock-coin">€</div>
+    <h3 id="lockTitle">Inserisci il PIN</h3>
+    <div class="pins" id="pins"><i></i><i></i><i></i><i></i></div>
+    <p class="lock-msg" id="lockMsg"></p>
+    <div class="pad">
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+      <button data-k="x" class="ghost" id="padX">Annulla</button><button data-k="0">0</button><button data-k="del" class="ghost" aria-label="Cancella">⌫</button>
+    </div>
+    <button class="lock-forgot" id="forgot">PIN dimenticato?</button>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="undo">Annulla</button></div>
@@ -231,9 +312,15 @@ function example(){
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.banks)S=example();
-/* chi usava già l'app riceve il nuovo salvadanaio vuoto, senza perdere i dati */
-if(!S.banks.banconote)S.banks.banconote=fresh().banks.banconote;
-if(!BANKS.includes(S.cur))S.cur='grandi';
+/* chi usava già l'app riceve le novità senza perdere i dati */
+function migrate(){
+  const f=fresh();
+  BANKS.forEach(b=>{if(!S.banks[b])S.banks[b]=f.banks[b];COINS[b].forEach(c=>{if(typeof S.banks[b].coins[c]!=='number')S.banks[b].coins[c]=0;});});
+  if(!BANKS.includes(S.cur))S.cur='grandi';
+  if(!Array.isArray(S.log))S.log=[];
+  if(!Array.isArray(S.opens))S.opens=[];
+}
+migrate();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 const total=b=>COINS[b].reduce((a,c)=>a+c*S.banks[b].coins[c],0);
@@ -275,7 +362,7 @@ function render(){
     <div class="goal">
       <div class="goal-row num"><span>${B.goal?`Obiettivo ${eur(B.goal)} · ${S.hide?'••':Math.floor(pct)}%`:'Nessun obiettivo'}</span><button id="setGoal">${B.goal?'Modifica':'Imposta'}</button></div>
       <div class="bar"><i style="width:${S.hide?0:pct}%"></i></div>
-      ${S.hide?'':B.goal&&t<B.goal?`<div class="goal-row num"><span>Mancano ${eur(B.goal-t)}</span></div>`:B.goal?'<div class="goal-row"><span style="color:var(--good);font-weight:600">Obiettivo raggiunto!</span></div>':''}
+      ${S.hide?'':B.goal&&t<B.goal?`<div class="goal-row num"><span>Mancano ${eur(B.goal-t)}</span></div><div class="forecast">${forecast(b,B.goal-t)}</div>`:B.goal?'<div class="goal-row"><span style="color:var(--good);font-weight:600">Obiettivo raggiunto!</span></div>':''}
     </div>
     <div class="coins">${COINS[b].map(c=>`
       <div class="cbox">
@@ -287,7 +374,7 @@ function render(){
       </div>`).join('')}
     </div>
     <p class="hint">Tocca ${one} ogni volta che la metti nel salvadanaio</p>
-    <div class="actions"><button class="btn danger" id="empty" ${t?'':'disabled'}>Svuota salvadanaio</button></div>`;
+    <div class="actions"><button class="btn" id="withdraw" ${t?'':'disabled'}>Preleva</button><button class="btn danger" id="empty" ${t?'':'disabled'}>Svuota salvadanaio</button></div>`;
 
   const wk=Date.now()-7*864e5;
   const week=S.log.filter(l=>l.t>=wk).reduce((a,l)=>a+l.c*l.d,0);
@@ -296,14 +383,176 @@ function render(){
     [eur(week),'Ultimi 7 giorni'],
     [eur(g+opened),'Risparmiato da sempre'],
     [eur(opened),'Già tolto dai salvadanai'],
-    [pz(S.opens.length)+'',S.opens.length===1?'Svuotamento':'Svuotamenti']
+    [pz(S.opens.length)+'',S.opens.length===1?'Prelievo o svuotamento':'Prelievi e svuotamenti']
   ].map(([v,l])=>`<div class="stat"><b class="num">${v}</b><span>${l}</span></div>`).join('');
 
   const items=[...S.log.map(l=>({...l,k:'c'})),...S.opens.map(o=>({...o,k:'o'}))].sort((a,b)=>b.t-a.t).slice(0,40);
   $('hist').innerHTML=items.length?items.map(i=>i.k==='o'
-    ?`<li><span class="dot" style="background:${ACC[i.b]}"></span><span class="what open">Svuotato ${esc((S.banks[i.b]||{name:''}).name)}: ${eur(i.a)}</span><span class="when">${when(i.t)}</span></li>`
+    ?`<li><span class="dot" style="background:${ACC[i.b]}"></span>${i.kind==='prelievo'
+      ?`<span class="what wd">Prelievo da ${esc((S.banks[i.b]||{name:''}).name)}: ${eur(i.a)}${i.why?` <span class="why">· ${esc(i.why)}</span>`:''}</span>`
+      :`<span class="what open">Svuotato ${esc((S.banks[i.b]||{name:''}).name)}: ${eur(i.a)}</span>`}<span class="when">${when(i.t)}</span></li>`
     :`<li><span class="dot" style="background:${ACC[i.b]}"></span><span class="what num ${i.d<0?'neg':''}">${i.d>0?'+':'−'} ${Math.abs(i.d)>1?pz(Math.abs(i.d))+' × ':''}${coinLabel(i.c)}${Math.abs(i.d)>1?' = '+eur(Math.abs(i.d)*i.c):''}</span><span class="when">${when(i.t)}</span></li>`).join('')
     :'<li class="empty">Ancora nessuna moneta. Tocca una moneta qui sopra per iniziare.</li>';
+  renderChart();
+  renderSettings();
+}
+
+/* ---------- Previsione obiettivo ---------- */
+function forecast(b,missing){
+  const now=Date.now(),mine=S.log.filter(l=>l.b===b);
+  if(!mine.length)return'Aggiungi qualche moneta e ti dico quando arrivi all’obiettivo.';
+  const first=Math.min(...mine.map(l=>l.t));
+  const span=Math.min(30,Math.max(7,(now-first)/864e5));
+  const saved=mine.filter(l=>l.t>=now-span*864e5).reduce((a,l)=>a+l.c*l.d,0);
+  if(saved<=0)return'Nell’ultimo periodo non hai aggiunto niente: riprendi a risparmiare per vedere la previsione.';
+  const days=Math.ceil(missing/(saved/span));
+  if(days>3650)return'Al ritmo attuale ci vorranno più di 10 anni.';
+  const d=new Date(now+days*864e5),same=d.getFullYear()===new Date().getFullYear();
+  const when=d.toLocaleDateString('it-IT',same?{day:'numeric',month:'long'}:{day:'numeric',month:'long',year:'numeric'});
+  return`Al tuo ritmo arrivi all’obiettivo verso il <b>${when}</b>`+(days<=1?' (domani!)':` (tra ${days} giorni)`);
+}
+
+/* ---------- Grafico andamento ---------- */
+function weekStart(t){const d=new Date(t);d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getTime();}
+function renderChart(){
+  const m=S.chart==='m';
+  $('cmW').setAttribute('aria-pressed',!m);$('cmM').setAttribute('aria-pressed',m);
+  if(S.hide){$('chart').innerHTML='<div class="chart-empty">Cifre nascoste</div>';return}
+  const n=m?12:12,buckets=[],now=new Date();
+  for(let i=n-1;i>=0;i--){
+    let s,e,label;
+    if(m){const d=new Date(now.getFullYear(),now.getMonth()-i,1);s=d.getTime();e=new Date(d.getFullYear(),d.getMonth()+1,1).getTime();
+      label=d.toLocaleDateString('it-IT',{month:'short'}).replace('.','');}
+    else{s=weekStart(now)-i*7*864e5;e=s+7*864e5;const d=new Date(s);label=d.getDate()+'/'+(d.getMonth()+1);}
+    buckets.push({s,e,label,v:0});
+  }
+  S.log.forEach(l=>{const k=buckets.find(x=>l.t>=x.s&&l.t<x.e);if(k)k.v+=l.c*l.d;});
+  buckets.forEach(k=>k.v=Math.max(0,k.v));
+  const max=Math.max(...buckets.map(k=>k.v));
+  if(!max){$('chart').innerHTML=`<div class="chart-empty">Ancora niente da mostrare: i risparmi ${m?'di ogni mese':'di ogni settimana'} compariranno qui.</div>`;return}
+  const nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v)));return[1,2,2.5,5,10].map(f=>f*p).find(x=>x>=v)};
+  const top=nice(max/100)*100;
+  const W=340,H=170,L=44,R=6,T=10,B=24,cw=(W-L-R)/n,ch=H-T-B;
+  const y=v=>T+ch-(v/top)*ch;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Risparmi ${m?'per mese':'per settimana'}">`;
+  [0,top/2,top].forEach(v=>{svg+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L-6}" y="${y(v)+4}" text-anchor="end">${fmt.format(v/100).replace(',00','')}</text>`;});
+  buckets.forEach((k,i)=>{
+    const x=L+i*cw+cw*.18,w=cw*.64,h=Math.max(k.v?2:0,(k.v/top)*ch);
+    svg+=`<rect class="cbar${i===n-1?' now':''}" x="${x}" y="${T+ch-h}" width="${w}" height="${h}" rx="3"><title>${k.label}: ${fmt.format(k.v/100)}</title></rect>`;
+    if(i%(m?2:3)===(n-1)%(m?2:3))svg+=`<text class="ax" x="${x+w/2}" y="${H-6}" text-anchor="middle">${k.label}</text>`;
+  });
+  svg+='</svg>';
+  /* la media conta solo i periodi da quando usi l'app */
+  const firstT=Math.min(...S.log.map(l=>l.t)),past=buckets.slice(0,-1).filter(k=>k.e>firstT);
+  const cur=buckets[n-1].v,prevAvg=past.length?past.reduce((a,k)=>a+k.v,0)/past.length:0;
+  $('chart').innerHTML=svg+`<div class="chart-note num">${m?'Questo mese':'Questa settimana'}: <b>${fmt.format(cur/100)}</b> · media ${fmt.format(prevAvg/100)}</div>`;
+}
+
+/* ---------- Impostazioni: backup e PIN ---------- */
+function renderSettings(){
+  const lb=S.lastBackup,old=!lb||Date.now()-lb>30*864e5;
+  const pinOn=!!getPin();
+  $('settings').innerHTML=`
+    <div class="set-item">
+      <div><b>Backup</b><span class="${old?'warn':''}">${lb?'Ultimo backup: '+new Date(lb).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'}):'Non hai ancora fatto un backup'}</span></div>
+      <span>Salva un file con tutti i dati da tenere su Drive o WhatsApp. Se cambi telefono lo ripristini qui.</span>
+      <div class="actions"><button class="btn" id="bkSave">Salva backup</button><button class="btn" id="bkLoad">Ripristina</button></div>
+    </div>
+    <div class="set-item">
+      <div><b>Blocco con PIN</b><span>${pinOn?'Attivo: l’app chiede il PIN quando la apri':'Non attivo'}</span></div>
+      <div class="actions">${pinOn?'<button class="btn" id="pinChange">Cambia PIN</button><button class="btn danger" id="pinOff">Disattiva</button>':'<button class="btn" id="pinOn">Attiva PIN</button>'}</div>
+    </div>`;
+}
+
+function backupText(){return JSON.stringify({app:'salvadanaio',versione:1,salvato:new Date().toISOString(),dati:S});}
+async function doBackup(){
+  S.lastBackup=Date.now();
+  const day=new Date().toISOString().slice(0,10),txt=backupText();
+  try{
+    const f=new File([txt],`salvadanaio-backup-${day}.txt`,{type:'text/plain'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Backup Salvadanaio'});save();render();toast('Backup salvato');return}
+  }catch(e){if(e&&e.name==='AbortError'){S.lastBackup=null;return}}
+  try{
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));
+    a.download=`salvadanaio-backup-${day}.json`;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),5000);save();render();toast('Backup salvato nei Download');
+  }catch(e){S.lastBackup=null;toast('Non riesco a salvare il backup qui');}
+}
+$('restoreFile').onchange=e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    let d;try{d=JSON.parse(r.result)}catch(x){}
+    if(!d||d.app!=='salvadanaio'||!d.dati||!d.dati.banks){toast('Questo file non è un backup di Salvadanaio');return}
+    const quando=new Date(d.salvato).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+    const tot=BANKS.reduce((a,b)=>a+(d.dati.banks[b]?COINS[b].reduce((s,c)=>s+c*(d.dati.banks[b].coins[c]||0),0):0),0);
+    modal(`<h3>Ripristinare il backup?</h3><p>Backup del ${quando} con ${fmt.format(tot/100)} nei salvadanai. Sostituisce i dati che vedi ora.</p><div class="row"><button class="btn" data-x>Annulla</button><button class="btn primary" data-ok>Ripristina</button></div>`,
+      ()=>{const hide=S.hide;S=d.dati;S.hide=hide;migrate();save();render();toast('Backup ripristinato');});
+  };
+  r.readAsText(f);
+};
+
+/* PIN: si salva solo un'impronta, mai il PIN in chiaro */
+const PINKEY=KEY+'-pin';
+const getPin=()=>{try{return localStorage.getItem(PINKEY)}catch(e){return null}};
+async function hashPin(p){
+  const txt='salvadanaio:'+p;
+  if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  let h=0;for(const ch of txt)h=(h*31+ch.charCodeAt(0))|0;return'x'+h;
+}
+let lockMode=null,pinBuf='',pinFirst='';
+function openLock(mode){
+  lockMode=mode;pinBuf='';pinFirst='';
+  $('lockTitle').textContent={unlock:'Inserisci il PIN',set1:'Scegli un PIN di 4 cifre',off:'PIN attuale',change:'PIN attuale'}[mode];
+  $('padX').style.visibility=mode==='unlock'?'hidden':'visible';
+  $('forgot').hidden=mode!=='unlock';
+  $('lockMsg').textContent='';drawPins();$('lock').hidden=false;
+}
+function drawPins(){[...$('pins').children].forEach((d,i)=>d.classList.toggle('on',i<pinBuf.length));}
+function pinError(msg){$('lockMsg').textContent=msg;pinBuf='';drawPins();const p=$('pins');p.classList.remove('shake');void p.offsetWidth;p.classList.add('shake');}
+async function pinDone(){
+  const p=pinBuf,h=await hashPin(p);
+  if(lockMode==='unlock'){if(h===getPin()){$('lock').hidden=true;lockMode=null}else pinError('PIN sbagliato, riprova');return}
+  if(lockMode==='off'||lockMode==='change'){
+    if(h!==getPin())return pinError('PIN sbagliato, riprova');
+    if(lockMode==='off'){try{localStorage.removeItem(PINKEY)}catch(e){}$('lock').hidden=true;render();toast('PIN disattivato');return}
+    lockMode='set1';pinBuf='';$('lockTitle').textContent='Scegli il nuovo PIN';drawPins();return;
+  }
+  if(lockMode==='set1'){pinFirst=p;lockMode='set2';pinBuf='';$('lockTitle').textContent='Ripeti il PIN';drawPins();return}
+  if(lockMode==='set2'){
+    if(p!==pinFirst){lockMode='set1';pinFirst='';$('lockTitle').textContent='Scegli un PIN di 4 cifre';return pinError('I due PIN non coincidono, ricomincia')}
+    try{localStorage.setItem(PINKEY,h)}catch(e){}$('lock').hidden=true;lockMode=null;render();toast('PIN attivato');
+  }
+}
+let hiddenAt=0;
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)hiddenAt=Date.now();
+  else if(getPin()&&hiddenAt&&Date.now()-hiddenAt>30000&&$('lock').hidden){$('modal').hidden=true;openLock('unlock');}
+});
+
+/* ---------- Prelievo parziale ---------- */
+let W={},wWhy='';
+function openWithdraw(){
+  const b=S.cur,B=S.banks[b];W={};wWhy='';
+  const rows=COINS[b].filter(c=>B.coins[c]>0).map(c=>`<div class="wrow"><span class="wl">${coinLabel(c)}</span><span class="wa num">ne hai ${B.coins[c]}</span><button data-wm="${c}" aria-label="Uno in meno">−</button><b class="num" id="w${c}">0</b><button data-wp="${c}" aria-label="Uno in più">+</button></div>`).join('');
+  modal(`<h3>Preleva da “${esc(B.name)}”</h3><p>Indica cosa togli dal salvadanaio.</p><div class="wrows">${rows}</div>
+    <div class="chips">${['Spesa','Regalo','Bollette','Svago','Emergenza'].map(w=>`<button data-why="${w}">${w}</button>`).join('')}</div>
+    <label>Motivo (facoltativo)<input id="fWhy" data-nofocus maxlength="40" placeholder="es. pizza con amici"></label>
+    <div class="preview num" id="wTot">Totale: 0,00 €</div>
+    <div class="row"><button class="btn" data-x>Annulla</button><button class="btn primary" data-ok>Preleva</button></div>`,
+    ()=>{
+      const a=Object.entries(W).reduce((s,[c,n])=>s+c*n,0);if(!a)return false;
+      const why=$('fWhy').value.trim()||wWhy,o={t:Date.now(),b,a,kind:'prelievo',why,coins:{...W}};
+      Object.entries(W).forEach(([c,n])=>B.coins[c]-=n);S.opens.push(o);save();render();
+      toast(`Prelevati ${eur(a)}`,()=>{Object.entries(o.coins).forEach(([c,n])=>S.banks[b].coins[c]+=n);S.opens.splice(S.opens.indexOf(o),1);});
+    });
+}
+function drawW(){
+  const B=S.banks[S.cur];
+  COINS[S.cur].forEach(c=>{const el=$('w'+c);if(el)el.textContent=W[c]||0;});
+  document.querySelectorAll('[data-wm]').forEach(x=>x.disabled=!W[x.dataset.wm]);
+  document.querySelectorAll('[data-wp]').forEach(x=>x.disabled=(W[x.dataset.wp]||0)>=B.coins[x.dataset.wp]);
+  $('wTot').textContent='Totale: '+fmt.format(Object.entries(W).reduce((s,[c,n])=>s+c*n,0)/100);
 }
 
 let toastTimer,lastUndo=null;
@@ -329,7 +578,7 @@ function change(c,d){
 
 function modal(html,onOk){
   $('sheet').innerHTML=html;$('modal').hidden=false;
-  const inp=$('sheet').querySelector('input');if(inp){inp.focus();inp.select();}
+  const inp=$('sheet').querySelector('input');if(inp&&!('nofocus' in inp.dataset)){inp.focus();inp.select();}
   const close=()=>{$('modal').hidden=true};
   $('sheet').querySelector('[data-x]').onclick=close;
   const ok=()=>{if(onOk(inp)!==false)close()};
@@ -340,6 +589,30 @@ $('modal').onclick=e=>{if(e.target.id==='modal')$('modal').hidden=true};
 
 document.addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.k){
+    const k=t.dataset.k;
+    if(k==='x'){$('lock').hidden=true;lockMode=null;return}
+    if(k==='del'){pinBuf=pinBuf.slice(0,-1);drawPins();return}
+    if(pinBuf.length<4){pinBuf+=k;drawPins();$('lockMsg').textContent='';if(pinBuf.length===4)setTimeout(pinDone,120);}
+    return;
+  }
+  if(t.id==='forgot'){
+    $('lock').hidden=true;
+    modal(`<h3>PIN dimenticato</h3><p>Il PIN non si può recuperare. L’unico modo è cancellare PIN e dati dell’app. Se hai un backup, dopo potrai ripristinarlo da Impostazioni.</p><div class="row"><button class="btn" data-x>Indietro</button><button class="btn primary danger" data-ok>Cancella tutto</button></div>`,
+      ()=>{try{localStorage.removeItem(PINKEY)}catch(e){}S=fresh();save();render();toast('Dati e PIN cancellati');});
+    $('sheet').querySelector('[data-x]').onclick=()=>{$('modal').hidden=true;openLock('unlock');};
+    return;
+  }
+  if(t.dataset.wp){const c=t.dataset.wp;if((W[c]||0)<S.banks[S.cur].coins[c])W[c]=(W[c]||0)+1;drawW();return}
+  if(t.dataset.wm){const c=t.dataset.wm;if(W[c])W[c]--;if(!W[c])delete W[c];drawW();return}
+  if(t.dataset.why){wWhy=wWhy===t.dataset.why?'':t.dataset.why;document.querySelectorAll('[data-why]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.why===wWhy));return}
+  if(t.dataset.cm){S.chart=t.dataset.cm;save();renderChart();return}
+  if(t.id==='withdraw'){openWithdraw();drawW();return}
+  if(t.id==='bkSave'){doBackup();return}
+  if(t.id==='bkLoad'){$('restoreFile').click();return}
+  if(t.id==='pinOn'){openLock('set1');return}
+  if(t.id==='pinChange'){openLock('change');return}
+  if(t.id==='pinOff'){openLock('off');return}
   if(t.id==='eye'){S.hide=!S.hide;save();render();return}
   if(t.dataset.b){S.cur=t.dataset.b;save();render();return}
   if(t.dataset.add){change(+t.dataset.add,1);return}
@@ -359,6 +632,11 @@ document.addEventListener('click',e=>{
     ()=>{const b=S.cur,prev={...B.coins},o={t:Date.now(),b,a:tot};S.opens.push(o);COINS[b].forEach(c=>B.coins[c]=0);save();render();
       toast('Salvadanaio svuotato',()=>{S.banks[b].coins=prev;S.opens.splice(S.opens.indexOf(o),1);});});}
   if(t.id==='startFresh'){S=fresh();save();render();toast('Pronto: si parte da zero');}
+});
+document.addEventListener('keydown',e=>{
+  if($('lock').hidden)return;
+  if(/^[0-9]$/.test(e.key)&&pinBuf.length<4){pinBuf+=e.key;drawPins();if(pinBuf.length===4)setTimeout(pinDone,120);}
+  else if(e.key==='Backspace'){pinBuf=pinBuf.slice(0,-1);drawPins();}
 });
 
 /* Installazione come app: il pulsante è sempre visibile finché l'app non è installata */
@@ -386,9 +664,14 @@ $('install').onclick=async()=>{
     ()=>{markInstalled();});
 };
 window.addEventListener('appinstalled',()=>{markInstalled();window.__bip=null;toast('App installata sul telefono');});
-if('serviceWorker' in navigator&&window.isSecureContext){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+if('serviceWorker' in navigator&&window.isSecureContext){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  /* ogni volta che apri l'app con internet, rinfresca la copia per la modalità aereo */
+  if(navigator.onLine)navigator.serviceWorker.ready.then(r=>{try{r.active&&r.active.postMessage('refill')}catch(e){}});
+}
 
 render();
+if(getPin())openLock('unlock');
 </script>
 </body>
 </html>
